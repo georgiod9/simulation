@@ -37,11 +37,16 @@ simulation/
 ├── src/
 │   └── main.cpp          # Entry point
 ├── CMakeLists.txt        # Build configuration
+├── build.sh              # Build script
+├── run.sh                # Run the built application (unix executable)
+├── dev.sh                # Start server with entr (hot reload enabled)
 └── README.md
 ```
 
 ## Quick Start
 
-1. Install dependencies: `brew install sfml box2d cmake`
-2. Build: `mkdir build && cd build && cmake .. && make`
-3. Run: `./simulation`
+1. Install dependencies: `brew install sfml box2d cmake entr`
+2. In root, run build script: `sh build.sh`
+3. In root, run dev server (with recompile on save): `./dev.sh`
+
+---
