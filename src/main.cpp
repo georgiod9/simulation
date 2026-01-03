@@ -1,8 +1,14 @@
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
 #include <unordered_map>
-const float SCALE = 100.f;
+#include <ToolMode.h>
 
+const float SCALE = 100.f;
+struct ChainState
+{
+    b2BodyId *lastBody = nullptr;
+    bool active = false;
+};
 struct Wall
 {
     b2BodyId bodyId;
@@ -71,6 +77,10 @@ int main()
     bool is_spawning = false;
     sf::Clock spawnClock;
     const sf::Time spawnInterval = sf::milliseconds(50);
+
+    ToolMode currentTool = ToolMode::Drag;
+    ChainState chain;
+    ToolMenu menu(font);
 
     // The ground is positioned correctly in Box2D meters relative to SCALE
     const float groundX = 300.f / SCALE;
@@ -181,12 +191,28 @@ int main()
         // Process events
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
-
-            // if (is_spawning)
-            // {
-            //     // Spawn a new object on right click
-            //     create_new_box(world_id, window, box_config_1);
-            // }
+            if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->code == sf::Keyboard::Key::Num1)
+                {
+                    currentTool = ToolMode::Drag;
+                    chain.active = false;
+                    menu.setActive(currentTool);
+                }
+                else if (keyPressed->code == sf::Keyboard::Key::Num2)
+                {
+                    currentTool = ToolMode::Spawn;
+                    chain.active = false;
+                    menu.setActive(currentTool);
+                }
+                else if (keyPressed->code == sf::Keyboard::Key::Num3)
+                {
+                    currentTool = ToolMode::CreateChain;
+                    chain.lastBody = nullptr;
+                    chain.active = true;
+                    menu.setActive(currentTool);
+                }
+            }
 
             // Handle mouse released event
             if (event->is<sf::Event::MouseButtonReleased>())
